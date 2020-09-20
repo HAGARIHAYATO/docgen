@@ -6,7 +6,7 @@
   - Please access to this page : https://doc-station.firebaseapp.com/
 - And then
   - Post own document
-  - get this document id
+  - Get this document id
     - ex... sdfkjdksfjlagkf
 
 ```
