@@ -1,38 +1,41 @@
 package docgen
 
 import (
-	"fmt"
+	"encoding/json"
+	"io/ioutil"
 	"log"
-
-	"golang.org/x/net/context"
-
-	firebase "firebase.google.com/go"
-	_ "firebase.google.com/go/auth"
-
-	"google.golang.org/api/option"
+	"net/http"
 )
 
-func InitFireStore() (*firebase.App, error) {
-	opt := option.WithCredentialsFile("./serviceAccountKey.json")
-	app, err := firebase.NewApp(context.Background(), nil, opt)
-	if err != nil {
-		return nil, fmt.Errorf("error initializing app: %v", err)
-	}
-	return app, nil
+type Item struct {
+	Name string `json:"name"`
+	Fields `json:"fields"`
+	CreatedTime string `json:"createTime"`
+	UpdatedTime string `json:"updateTime"`
 }
 
-func GetDataByID(app *firebase.App, id string) (map[string]interface{}, error) {
-	ctx := context.Background()
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer client.Close()
-	dsnap, err := client.Collection("docs").Doc(id).Get(ctx)
+type Fields struct {
+	Text `json:"text"`
+}
+
+type Text struct {
+	StringValue string `json:"stringValue"`
+}
+
+func GetDataByID(id string) (interface{}, error) {
+	var url = "https://firestore.googleapis.com/v1/projects/doc-station/databases/(default)/documents/docs/"
+	resp, err := http.Get(url + id)
 	if err != nil {
 		return nil, err
 	}
-	m := dsnap.Data()
-	fmt.Printf("Document data: %#v\n", m)
-	return m, nil
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var data Item
+	if err := json.Unmarshal(body, &data); err != nil {
+		log.Fatal(err)
+	}
+	return data.Fields.Text.StringValue, nil
 }

@@ -4,40 +4,47 @@ import (
 	"errors"
 	"fmt"
 	"github.com/HAGARIHAYATO/docgen"
+	"log"
 	"os"
-	"os/exec"
 )
 func main() {
-	var args []string
-	if len(os.Args) > 2 {
-		args = os.Args[1:]
-	} else if len(os.Args) > 1  {
-		fmt.Println("expected 2 arguments but give 1 argument")
-	} else {
-		fmt.Println("invalid input")
-	}
-	path := args[0] + "/"
-	title := args[1]
-	id := args[2]
-	app, err := docgen.InitFireStore()
+
+	args := os.Args[1:]
+
+	path, title, id, err := argsHandle(args)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	data, err := docgen.GetDataByID(app, id)
+
+	text, err := docgen.GetDataByID(id)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+
 	file, err := os.OpenFile(path + title, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+
 	defer file.Close()
-	if err != nil {
-		panic(err)
+	_ = writeByres(file, text)
+}
+
+func argsHandle(args []string) (string, string, string, error) {
+	var err string
+	switch len(args) {
+	case 3:
+		path := args[0] + "/"
+		title := args[1]
+		id := args[2]
+		return path, title, id, nil
+	default:
+		err = fmt.Sprintf(
+			"invalid arguments counts. expected to get 3 arguments, but got %v. \n ex... docgen <path> <file-title> <docID>",
+			len(args),
+			)
+		return "", "", "", errors.New(err)
 	}
-	_ = writeByres(file, data["text"])
-	out, err := exec.Command("ls", "-la").Output()
-	fmt.Println(string(out))
 }
 
 func writeByres(file *os.File, iter interface{}) error {
