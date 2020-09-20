@@ -1,44 +1,38 @@
 package docgen
 
+import (
+	"fmt"
+	"log"
 
-var (
-	Rails = map[string][]string{
-		"Doc": []string{
-			"FROM ruby:2.5\n",
-			"RUN apt-get update -qq && apt-get install -y nodejs postgresql-client\n",
-			"RUN mkdir /myapp\n",
-			"WORKDIR /myapp\n",
-			"COPY Gemfile /myapp/Gemfile\n",
-			"COPY Gemfile.lock /myapp/Gemfile.lock\n",
-			"RUN bundle install\n",
-			"COPY . /myapp\n\n",
-			"# Add a script to be executed every time the container starts.\n",
-			"COPY entrypoint.sh /usr/bin/\n",
-			"RUN chmod +x /usr/bin/entrypoint.sh\n",
-			"ENTRYPOINT [\"entrypoint.sh\"]\n",
-			"EXPOSE 3000\n\n",
-			"# Start the main process.\n",
-			"CMD [\"rails\", \"server\", \"-b\", \"0.0.0.0\"]",
-	    },
-		"ComposeDoc": []string{
-			"version: '3'\n",
-			"services:\n",
-			"  db:\n",
-			"    image: postgres\n",
-			"    volumes:\n",
-			"      - ./tmp/db:/var/lib/postgresql/data\n",
-			"    environment:\n",
-			"      POSTGRES_PASSWORD: password\n",
-			"  web:\n",
-			"    build: .\n",
-			"    command: bash -c \"rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'\"\n",
-			"    volumes:\n",
-			"      - .:/myapp\n",
-			"    ports:\n",
-			"      - \"3000:3000\"\n",
-			"    depends_on:\n",
-			"      - db",
-		},
-	}
+	"golang.org/x/net/context"
+
+	firebase "firebase.google.com/go"
+	_ "firebase.google.com/go/auth"
+
+	"google.golang.org/api/option"
 )
 
+func InitFireStore() (*firebase.App, error) {
+	opt := option.WithCredentialsFile("./serviceAccountKey.json")
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		return nil, fmt.Errorf("error initializing app: %v", err)
+	}
+	return app, nil
+}
+
+func GetDataByID(app *firebase.App, id string) error {
+	ctx := context.Background()
+	client, err := app.Firestore(ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer client.Close()
+	dsnap, err := client.Collection("docs").Doc(id).Get(ctx)
+	if err != nil {
+		return err
+	}
+	m := dsnap.Data()
+	fmt.Printf("Document data: %#v\n", m)
+	return nil
+}

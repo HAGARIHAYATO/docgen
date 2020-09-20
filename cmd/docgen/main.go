@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/HAGARIHAYATO/docgen"
 	"os"
@@ -16,35 +15,26 @@ func main() {
 	} else {
 		fmt.Println("invalid input")
 	}
-	path := args[1] + "/"
-	file, err := os.OpenFile(path + "Dockerfile", os.O_WRONLY|os.O_CREATE, 0666)
+	title := args[1]
+	path := args[2] + "./"
+	id := args[3]
+	app, err := docgen.InitFireStore()
 	if err != nil {
 		panic(err)
 	}
-	comFile, err := os.OpenFile(path + "docker-compose.yml", os.O_WRONLY|os.O_CREATE, 0666)
+	docgen.GetDataByID(app, id)
+	file, err := os.OpenFile(path + title, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
-	defer comFile.Close()
 
-	fw, err := argsAnalyzer(args[0])
 	if err != nil {
 		panic(err)
 	}
-	_ = writeByres(file, fw["Doc"])
-	_ = writeByres(comFile, fw["ComposeDoc"])
+	_ = writeByres(file, []string{"ss"})
 	out, err := exec.Command("ls", "-la").Output()
 	fmt.Println(string(out))
-}
-
-func argsAnalyzer(arg string) (map[string][]string, error) {
-	switch arg {
-	case "rails":
-		return docgen.Rails, nil
-	default:
-		return nil, errors.New("invalid frame work name")
-	}
 }
 
 func writeByres(file *os.File, array []string) error {
