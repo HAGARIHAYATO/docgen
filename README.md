@@ -1,4 +1,4 @@
-# this tool creates Dockerfile and docker-compose.yml
+# this tool creates hosting document on doc-station
 
 # how to use
 
