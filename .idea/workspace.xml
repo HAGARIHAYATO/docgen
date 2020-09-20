@@ -4,8 +4,6 @@
     <list default="true" id="382b99e2-a55f-4642-b9a2-4faf1aa6a5c3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/docgen/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/docgen/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store.go" beforeDir="false" afterPath="$PROJECT_DIR$/store.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

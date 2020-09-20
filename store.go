@@ -21,7 +21,7 @@ func InitFireStore() (*firebase.App, error) {
 	return app, nil
 }
 
-func GetDataByID(app *firebase.App, id string) error {
+func GetDataByID(app *firebase.App, id string) (map[string]interface{}, error) {
 	ctx := context.Background()
 	client, err := app.Firestore(ctx)
 	if err != nil {
@@ -30,9 +30,9 @@ func GetDataByID(app *firebase.App, id string) error {
 	defer client.Close()
 	dsnap, err := client.Collection("docs").Doc(id).Get(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	m := dsnap.Data()
 	fmt.Printf("Document data: %#v\n", m)
-	return nil
+	return m, nil
 }
