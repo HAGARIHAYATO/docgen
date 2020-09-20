@@ -2,14 +2,17 @@
 
 # how to use
 
+- At first
+  - Please access to this page : https://doc-station.firebaseapp.com/
+- And then
+  - Post own document
+  - get this document id
+    - ex... sdfkjdksfjlagkf
+
 ```
 go get -u github.com/HAGARIHAYATO/docgen/cmd/docgen
 
-docgen <framework-name> <path>
+docgen <path> <filename> <doc-id> 
 ```
-
-# precautions
-
-- this tool cover only rails now.😭
 
 
