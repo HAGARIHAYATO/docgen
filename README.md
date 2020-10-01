@@ -13,6 +13,8 @@
 go get -u github.com/HAGARIHAYATO/docgen/cmd/docgen
 
 docgen <path> <filename> <doc-id> 
+
+ex... docgen . main.go dChAQ02roc8ReeJJ8Z7F
 ```
 
 
